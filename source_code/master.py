@@ -1,39 +1,49 @@
 import datetime
+import json
 
+import paho.mqtt.client as mqttc
 import paho.mqtt.publish as publish
 
 
 MQTT_SERVER = 'localhost'
-NUMBER_OF_CAMERAS = 4
+NUMBER_OF_CAMERAS = 2
 
 
 def take_photo():
+    received_photos = {}
 
-    # Send order
+    def on_connect(client, userdata, flags, rc):
+        print('Connected with result code ' + str(rc))
+        client.subscribe('photo_taken')
+
+    def on_message(client, userdata, msg):
+        print(msg.topic + ', ' + str(msg.payload))
+        if msg.topic == 'photo_taken':
+            photo_data = json.loads(msg.payload)
+            received_photos[photo_data['camera_no']] = photo_data
+
+    # Prepare to receive
+    client = mqttc.Client()
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.connect(MQTT_SERVER, 1883, 60)
+
+    # Send "take photo" signal
     print('Sending "take_photo" signal')
     topic = 'take_photo'
     photo_id = datetime.datetime.now().isoformat()
     publish.single(topic, payload=photo_id, hostname=MQTT_SERVER)
 
-    # Collect photos
-    # TODO: Spawn a seperate process that waits for all photos and
-    # destroys itself
-    for cam in range(NUMBER_OF_CAMERAS):
-        print('Now collecting photo from camera %s' % cam)
+    # Receive photos
+    while len(received_photos) < NUMBER_OF_CAMERAS:
+        client.loop()
+    print('All photos has been received!')
+    print('received', received_photos)
 
     # Stich
     print('Stiching photo')
     # TODO
 
-# def on_message(client, userdata, msg):
-#     print(msg.topic + ', ' + str(msg.payload))
-#     if msg.topic == 'transfer_photo':
-#         print('Receiving photo with id %s' % id)
-#         # TODO: Store photo
 
-#         # TODO: If all photos have been received, then stich!
-#         # Cameras are expected to be numbered increasingly from left to
-#         # right
-
-
-take_photo()
+if __name__ == "__main__":
+    take_photo()
