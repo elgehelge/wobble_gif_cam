@@ -6,6 +6,6 @@ run-camera:
 	git pull
 	python source_code/camera.py
 
-run-camera:
+run-master:
 	git pull
-	python source_code/camera.py
+	python source_code/master.py

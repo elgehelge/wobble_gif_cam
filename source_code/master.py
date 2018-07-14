@@ -34,3 +34,6 @@ def take_photo():
 #         # TODO: If all photos have been received, then stich!
 #         # Cameras are expected to be numbered increasingly from left to
 #         # right
+
+
+take_photo()

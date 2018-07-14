@@ -1,9 +1,10 @@
 import os
+import json
 
 import paho.mqtt.client as mqtt
 
 
-MQTT_SERVER = 'localhost'  # TODO: Make static IP?
+MQTT_SERVER = '192.168.1.84'  # TODO: Make static IP?
 CAMERA_NO = os.getenv('CAMERA_NO')
 
 
@@ -29,11 +30,11 @@ def on_message(client, userdata, msg):
             r" (        )  " \
             r"( \ /--\ / ) " \
             r" w'W    W'w  "
-        payload = {
+        payload = json.dumps({
             'id': photo_id,
             'photo': photo,
-        }
-        client.publish.single('transfer_photo', payload, hostname=MQTT_SERVER)
+        })
+        client.publish('transfer_photo', payload)
         print('Photo transferred')
 
 
