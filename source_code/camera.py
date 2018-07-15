@@ -1,13 +1,15 @@
 import os
 import json
 import datetime
+import random
 
+import numpy
 import paho.mqtt.client as mqttc
 import paho.mqtt.publish as publish
 
 
 MQTT_SERVER = 'localhost'  # TODO: Make static IP?
-CAMERA_NO = os.getenv('CAMERA_NO')
+CAMERA_NO = int(os.getenv('CAMERA_NO'))
 
 
 def on_connect(client, userdata, flags, rc):
@@ -21,13 +23,13 @@ def on_message(client, userdata, msg):
         photo_id = msg.payload
         # TODO: Snap a photo
         # Remove the 3 lines below when we have a real camera working
-        photo = np.zeros([10, 10])  # placeholder 10x10 image
-        photo[:,random.random.randint(0,9)] = 1  # add random line
+        photo = numpy.zeros([10, 10])  # placeholder 10x10 image
+        photo[:,random.randint(0,9)] = 255  # add random line
         print('Photo taken')
         payload = json.dumps({
             'camera_no': CAMERA_NO,
             'id': photo_id,
-            'photo': photo.tostring(),
+            'photo': photo.tolist(),
             'timestamp': datetime.datetime.now().isoformat(),
         })
         publish.single('photo_taken', payload, hostname=MQTT_SERVER)

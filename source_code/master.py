@@ -45,8 +45,9 @@ def take_photo():
 
     # Stich
     print('Stiching photo')
-    photos_str = [received[cam_no]['photo'] for cam_no in NUMBER_OF_CAMERAS]
-    photos = [imageio.core.util.Image(np.fromstring(p_str, dtype='uint8'))
+    photos_str = [received[cam_no]['photo']
+                  for cam_no in range(NUMBER_OF_CAMERAS)]
+    photos = [imageio.core.util.Image(np.array(p_str, dtype='uint8'))
               for p_str in photos_str]
     photo_sequence = photos[1:] + photos[::-1][1:]  # [2, 3, 4, 3, 2, 1]
     imageio.mimwrite('gifs/output.gif', photo_sequence, fps=8)
