@@ -20,22 +20,14 @@ def on_message(client, userdata, msg):
     if msg.topic == 'take_photo':
         photo_id = msg.payload
         # TODO: Snap a photo
+        # Remove the 3 lines below when we have a real camera working
+        photo = np.zeros([10, 10])  # placeholder 10x10 image
+        photo[:,random.random.randint(0,9)] = 1  # add random line
         print('Photo taken')
-        photo = "" \
-            r" PLACEHOLDER " \
-            r"  __    __   " \
-            r"  \/----\/   " \
-            r"   ).  .(    " \
-            r"  ( ('') )   " \
-            r"   )    (    " \
-            r"  /      \   " \
-            r" (        )  " \
-            r"( \ /--\ / ) " \
-            r" w'W    W'w  "
         payload = json.dumps({
             'camera_no': CAMERA_NO,
             'id': photo_id,
-            'photo': photo,
+            'photo': photo.tostring(),
             'timestamp': datetime.datetime.now().isoformat(),
         })
         publish.single('photo_taken', payload, hostname=MQTT_SERVER)
