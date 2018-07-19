@@ -24,7 +24,7 @@ def on_message(client, userdata, msg):
         # TODO: Snap a photo
         # Remove the 3 lines below when we have a real camera working
         photo = numpy.zeros([10, 10])  # placeholder 10x10 image
-        photo[:,random.randint(0,9)] = 255  # add random line
+        photo[:, random.randint(0, 9)] = 255  # add random line
         print('Photo taken')
         payload = json.dumps({
             'camera_no': CAMERA_NO,

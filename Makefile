@@ -1,3 +1,4 @@
 install:
 	sudo apt-get install -y mosquitto mosquitto-clients
-	sudo pip install -r requirements.txt
+	sudo apt-get install nmap
+	sudo pip3 install -r requirements.txt
