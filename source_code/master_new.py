@@ -48,12 +48,12 @@ def connect_device(ip: str) -> spur.ssh.SshShell:
     return shell
 
 
-def end_sessions(sessions: [spur.ssh.SshProcess]) -> None:
-    for session in sessions:
-        session.send_signal('SIGUSR2')
-    # Await terminations
-    for session in sessions:
-        session.wait_for_result()
+# def end_sessions(sessions: [spur.ssh.SshProcess]) -> None:
+#     for session in sessions:
+#         session.send_signal('SIGUSR2')
+#     # Await terminations
+#     for session in sessions:
+#         session.wait_for_result()
 
 
 def raw_image_path(image_id: str, device_id: str) -> str:
@@ -92,9 +92,10 @@ if __name__ == "__main__":
     # connect to devices
     print('Connecting to ' + str(len(ips)) + ' devices.')
     connections = [connect_device(ip) for ip in ips]
+    connections.sort(key=lambda conn: conn.cam_position)
 
     print('Making cameras ready for capturing')
-    capture_sessions = [setup_for_capture(conn) for conn in connections]
+    capture_sessions = [setup_for_capture(conn)  for conn in connections]
 
     # TODO: Make this triggered by user
     time.sleep(1)  # allow raspistill to shut down
@@ -118,5 +119,5 @@ if __name__ == "__main__":
     imageio.mimwrite(gif_file_path, images_sequence, fps=8)
     print('Image successfully saved on disk as ' + gif_file_path)
 
-    print('Ending session')
-    end_sessions(capture_sessions)
+    # print('Ending session')
+    # end_sessions(capture_sessions)
