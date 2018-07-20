@@ -21,7 +21,7 @@ DEFAULT_PASSWORD = 'raspberry'
 TEMP_IMAGE_PATH = '/tmp/wobble_gif_cam_latest_capture.jpg'
 RAW_IMAGE_DIR = 'wobble_gif_cam/captured_raw/'
 GIF_IMAGE_DIR = 'wobble_gif_cam/captured_gif/'
-JPEG_QUALITY = '99'
+RASPISTILL_SETTINGS = '--rotation 90 --quality 30 --width 640 --height 480'
 
 
 def discover_pis(include_this_device=False) -> Iterator[str]:
@@ -65,7 +65,7 @@ def setup_for_capture(connection) -> spur.ssh.SshProcess:
     connection.run(['killall', '-w', '-s', 'USR2', 'raspistill'], allow_error=True)  # kill old sessions
     # start raspistill
     print('Connecting to cam at position ' + connection.cam_position)
-    raspistill_process = connection.spawn(['raspistill', '-o', TEMP_IMAGE_PATH, '-dt', '-t', '0', '-q', JPEG_QUALITY, '-s'], store_pid=True)
+    raspistill_process = connection.spawn(['raspistill', '-o', TEMP_IMAGE_PATH, '-t', '0', *RASPISTILL_SETTINGS.split(), '-s'], store_pid=True)
     return raspistill_process
 
 
