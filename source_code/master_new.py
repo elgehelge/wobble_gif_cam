@@ -8,7 +8,7 @@ import shutil
 import datetime
 import os
 import socket
-from typing import Iterator, List
+from typing import Iterator
 
 import nmap
 import spur
@@ -44,6 +44,7 @@ def connect_device(ip: str) -> spur.ssh.SshShell:
                           missing_host_key=spur.ssh.MissingHostKey.accept)
     cam_position = shell.run(['cat', 'WOBBLE_GIF_CAM_POSITION']).output.decode().strip()
     shell.cam_position = cam_position
+    print('connected to ' + ip + ' with camera position ' + cam_position)
     return shell
 
 
@@ -83,27 +84,27 @@ def ensure_dir_exists(path: str):
 
 
 if __name__ == "__main__":
-    print('Discovering Raspberry PIs')
-
     # detect devices
+    print('Discovering Raspberry PIs')
     ips = list(discover_pis(include_this_device=True))
+    print('Found ' + str(ips))
 
     # connect to devices
-    print('Initializing. Connecting to ' + str(len(ips)) + ' devices.')
+    print('Connecting to ' + str(len(ips)) + ' devices.')
     connections = [connect_device(ip) for ip in ips]
 
-    print('setting up capture environment')
+    print('Making cameras ready for capturing')
     capture_sessions = [setup_for_capture(conn) for conn in connections]
-    print('waiting for devices to settle')
-    time.sleep(1)  # allow raspistill to shut down
 
-    print('started capturing!')
+    # TODO: Make this triggered by user
+    time.sleep(1)  # allow raspistill to shut down
+    print('Started capturing!')
     timestamp = datetime.datetime.now().isoformat()
     for session in capture_sessions:
         session.send_signal('SIGUSR1')
 
-    time.sleep(1)
     print('Getting files from remote devices')
+    time.sleep(1)
     for connection in connections:
         local_file_path = raw_image_path(timestamp, connection.cam_position)
         copy_remote_file(connection, TEMP_IMAGE_PATH, local_file_path)
