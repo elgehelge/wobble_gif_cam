@@ -3,16 +3,13 @@ Thanks to nallic for providing a big portion of this code at
 https://github.com/nallic/pi3dscanner/
 """
 
-import time
 import shutil
-import datetime
 import os
 import socket
 from typing import Iterator
 
 import nmap
 import spur
-import imageio
 
 
 HOSTS = '172.20.10.0/24'  # for iOS 6 and 7
@@ -81,43 +78,3 @@ def ensure_dir_exists(path: str):
     directory = os.path.dirname(path)
     if not os.path.exists(directory):
         os.makedirs(directory)
-
-
-if __name__ == "__main__":
-    # detect devices
-    print('Discovering Raspberry PIs')
-    ips = list(discover_pis(include_this_device=True))
-    print('Found ' + str(ips))
-
-    # connect to devices
-    print('Connecting to ' + str(len(ips)) + ' devices.')
-    connections = [connect_device(ip) for ip in ips]
-    connections.sort(key=lambda conn: conn.cam_position)
-
-    print('Making cameras ready for capturing')
-    capture_sessions = [setup_for_capture(conn)  for conn in connections]
-
-    # TODO: Make this triggered by user
-    time.sleep(1)  # allow raspistill to shut down
-    print('Started capturing!')
-    timestamp = datetime.datetime.now().isoformat()
-    for session in capture_sessions:
-        session.send_signal('SIGUSR1')
-
-    print('Getting files from remote devices')
-    time.sleep(1)
-    for connection in connections:
-        local_file_path = raw_image_path(timestamp, connection.cam_position)
-        copy_remote_file(connection, TEMP_IMAGE_PATH, local_file_path)
-
-    print('Generating GIF')
-    image_paths = [raw_image_path(timestamp, conn.cam_position) for conn in connections]
-    images = [imageio.imread(path) for path in image_paths]
-    images_sequence = images[1:] + images[::-1][1:]  # [2, 3, 4, 3, 2, 1]
-    gif_file_path = GIF_IMAGE_DIR + timestamp + '.gif'
-    ensure_dir_exists(gif_file_path)
-    imageio.mimwrite(gif_file_path, images_sequence, fps=8)
-    print('Image successfully saved on disk as ' + gif_file_path)
-
-    # print('Ending session')
-    # end_sessions(capture_sessions)
