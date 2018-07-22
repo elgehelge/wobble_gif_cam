@@ -7,9 +7,9 @@ import camera_ctrl
 
 app = Flask(__name__)
 
-RAW_IMAGE_DIR = 'OUTPUT/captured_raw/'
-GIF_IMAGE_DIR = 'OUTPUT/captured_gifs/'
-CONTACT_INFO_DB = 'OUTPUT/contact_info.db'
+RAW_IMAGE_DIR = 'static/OUTPUT/captured_raw/'
+GIF_IMAGE_DIR = 'static/OUTPUT/captured_gifs/'
+CONTACT_INFO_DB = 'static/OUTPUT/contact_info.db'
 
 
 def raw_image_path(image_id: str, device_id: str) -> str:
