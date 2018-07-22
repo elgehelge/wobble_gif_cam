@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <title>Wobble GIF Cam</title>
+</head>
+<body>
+    <div class="container-fluid">
+        <p>FILE NAME: {{gif_file_name}}</p>
+            <input id="email" class="form-control form-control-lg" type="text" placeholder="Email">
+            <button type="button" class="btn btn-primary btn-lg" onclick="window.location.href='/store_info/{{gif_file_name}}/' + jQuery('#email').val();">Submit</button>
+    </div>
+    <script src="/static/jquery-3.3.1.min.js"></script>
+    <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+</body>
+</html>

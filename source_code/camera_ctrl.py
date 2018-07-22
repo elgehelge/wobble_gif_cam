@@ -16,9 +16,7 @@ HOSTS = '172.20.10.0/24'  # for iOS 6 and 7
 DEFAULT_USERNAME = 'pi'
 DEFAULT_PASSWORD = 'raspberry'
 TEMP_IMAGE_PATH = '/tmp/wobble_gif_cam_latest_capture.jpg'
-RAW_IMAGE_DIR = 'wobble_gif_cam/captured_raw/'
-GIF_IMAGE_DIR = 'wobble_gif_cam/captured_gif/'
-RASPISTILL_SETTINGS = '--rotation 90 --quality 30 --width 640 --height 480'
+RASPISTILL_SETTINGS = '--rotation 90 --quality 80 --width 640 --height 480 --awb shade'
 
 
 def discover_pis(include_this_device=False) -> Iterator[str]:
@@ -41,20 +39,9 @@ def connect_device(ip: str) -> spur.ssh.SshShell:
                           missing_host_key=spur.ssh.MissingHostKey.accept)
     cam_position = shell.run(['cat', 'WOBBLE_GIF_CAM_POSITION']).output.decode().strip()
     shell.cam_position = cam_position
+    shell.ip = ip
     print('connected to ' + ip + ' with camera position ' + cam_position)
     return shell
-
-
-# def end_sessions(sessions: [spur.ssh.SshProcess]) -> None:
-#     for session in sessions:
-#         session.send_signal('SIGUSR2')
-#     # Await terminations
-#     for session in sessions:
-#         session.wait_for_result()
-
-
-def raw_image_path(image_id: str, device_id: str) -> str:
-    return RAW_IMAGE_DIR + image_id + '_' + device_id
 
 
 def setup_for_capture(connection) -> spur.ssh.SshProcess:
