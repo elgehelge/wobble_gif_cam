@@ -8,4 +8,5 @@ Raspberry Pi controlled camera for producing "wobble gifs"
 - run `make install`
 
 # Run the app
-run `make run`
+- run `python3 source_code/app.py
+- open `http://127.0.0.1:5000/` in a browser
