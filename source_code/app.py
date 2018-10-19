@@ -23,9 +23,8 @@ def initialize():
     # detect devices
     print('Discovering Raspberry PIs')
     # TODO: Automatic discovery is too unreliable, so IPs are hardcoded for now
+    ips = ['172.20.10.14', '172.20.10.2', '172.20.10.3', '172.20.10.13']
     # ips = list(camera_ctrl.discover_pis(include_this_device=False))
-    # ips = ['172.20.10.14', '172.20.10.2', '172.20.10.3', '172.20.10.13']
-    ips = ['172.20.10.14', '172.20.10.2', '172.20.10.3']
     print('Found ' + str(ips))
 
     # connect to devices
