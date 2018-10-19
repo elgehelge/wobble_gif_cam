@@ -16,7 +16,12 @@ HOSTS = '172.20.10.0/24'  # for iOS 6 and 7
 DEFAULT_USERNAME = 'pi'
 DEFAULT_PASSWORD = 'raspberry'
 TEMP_IMAGE_PATH = '/tmp/wobble_gif_cam_latest_capture.jpg'
-RASPISTILL_SETTINGS = '--rotation 270 --quality 80 --width 640 --height 480 --awb shade --nopreview'
+RASPISTILL_SETTINGS = '--rotation 270' \
+                      '--quality 80' \
+                      '--width 640' \
+                      '--height 480' \
+                      '--awb shade' \
+                      '--nopreview'
 
 
 def discover_pis(include_this_device=False) -> Iterator[str]:

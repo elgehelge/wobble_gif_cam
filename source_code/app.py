@@ -1,5 +1,4 @@
 import datetime
-import shelve
 import time
 
 from flask import Flask, render_template, redirect, url_for
@@ -12,7 +11,6 @@ app = Flask(__name__)
 
 RAW_IMAGE_DIR = 'static/OUTPUT/captured_raw/'
 GIF_IMAGE_DIR = 'static/OUTPUT/captured_gifs/'
-CONTACT_INFO_DB = 'static/OUTPUT/contact_info.db'
 
 
 def raw_image_path(image_id: str, device_id: str) -> str:
@@ -26,7 +24,8 @@ def initialize():
     print('Discovering Raspberry PIs')
     # TODO: Automatic discovery is too unreliable, so IPs are hardcoded for now
     # ips = list(camera_ctrl.discover_pis(include_this_device=False))
-    ips = ['172.20.10.14', '172.20.10.2', '172.20.10.3', '172.20.10.13']
+    # ips = ['172.20.10.14', '172.20.10.2', '172.20.10.3', '172.20.10.13']
+    ips = ['172.20.10.14', '172.20.10.2', '172.20.10.3']
     print('Found ' + str(ips))
 
     # connect to devices
@@ -43,23 +42,27 @@ def initialize():
     return connections, capture_sessions
 
 
-@app.route("/")
+@app.route('/')
 def show_start_screen():
     return render_template('start_screen.html')
 
 
-@app.route("/add_contact_info/<gif_file_name>")
-def show_add_contact_info(gif_file_name):
+@app.route('/add_contact_info/<gif_id>')
+def show_add_contact_info(gif_id):
     return render_template('add_contact_info.html',
-                           gif_file_name=gif_file_name)
+                           gif_id=gif_id)
 
 
-@app.route("/store_info/<gif_file_name>/<contact_info>")
-@app.route('/store_info/<gif_file_name>/')
-def store_info(gif_file_name, contact_info=''):
-    print("Storing" + str({gif_file_name: contact_info}) + ' in data store')
-    with shelve.open(CONTACT_INFO_DB) as db:
-        db[gif_file_name] = contact_info
+@app.route('/store_info/<gif_id>/<contact_info>')
+@app.route('/store_info/<gif_id>/')
+def store_info(gif_id, contact_info=''):
+    if contact_info != '':
+        info_file_path = GIF_IMAGE_DIR + gif_id + '.txt'
+        print('Storing contact info "' + contact_info + '" in ' + info_file_path)
+        with open(info_file_path, 'w') as f:
+            f.write(contact_info)
+    else:
+        print('No contact info provided')
     return redirect(url_for('show_start_screen'))
 
 
@@ -71,7 +74,7 @@ def snap_a_gif():
     timestamp = datetime.datetime.now().isoformat()
     for session in capture_sessions:
         session.send_signal('SIGUSR1')
-    time.sleep(1)  # give the camera time to store image on disk
+    time.sleep(0.5)  # give the camera time to store image on disk
 
     print('Getting files from remote devices')
     for connection in connections:
@@ -87,16 +90,13 @@ def snap_a_gif():
     aligned_imgs = img_utils.auto_align(images)
     # [1, 2, 3, 4] -> [2, 3, 4, 3, 2, 1]
     images_sequence = aligned_imgs[1:] + aligned_imgs[::-1][1:]
-    gif_file_name = timestamp + '.gif'
-    gif_file_path = GIF_IMAGE_DIR + gif_file_name
+    gif_id = timestamp
+    gif_file_path = GIF_IMAGE_DIR + gif_id + '.gif'
     camera_ctrl.ensure_dir_exists(gif_file_path)
     imageio.mimwrite(gif_file_path, images_sequence, fps=8)
     print('Image successfully saved on disk as ' + gif_file_path)
-
-    print("URL FOR", url_for('show_add_contact_info',
-                             gif_file_name=gif_file_name))
     return redirect(url_for('show_add_contact_info',
-                            gif_file_name=gif_file_name))
+                            gif_id=gif_id))
 
 
 connections, capture_sessions = initialize()

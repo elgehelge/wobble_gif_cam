@@ -9,9 +9,9 @@
 </head>
 <body>
     <div class="container-fluid">
-        <img style="width: 200px;" class="img-fluid img-thumbnail" src="/static/OUTPUT/captured_gifs/{{gif_file_name}}" />
+        <img style="width: 200px;" class="img-fluid img-thumbnail" src="/static/OUTPUT/captured_gifs/{{gif_id}}.gif" />
         <input id="email" class="form-control form-control-lg keyboard" type="text" placeholder="Email">
-        <button type="button" class="btn btn-primary btn-lg" onclick="window.location.href='/store_info/{{gif_file_name}}/' + jQuery('#email').val();">Submit</button>
+        <button type="button" class="btn btn-primary btn-lg" onclick="window.location.href='/store_info/{{gif_id}}/' + jQuery('#email').val();">Submit</button>
     </div>
     <script src="/static/jquery-3.3.1.min.js"></script>
     <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
