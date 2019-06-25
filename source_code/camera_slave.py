@@ -1,4 +1,3 @@
-import os
 import sys
 import json
 import datetime
@@ -9,11 +8,10 @@ import paho.mqtt.client as mqttc
 import paho.mqtt.publish as publish
 
 
-assert len(sys.argv) == 2, 'Please pass in the IP of the server'
+assert len(sys.argv) == 3, 'First argument: IP of the server /n' \
+                           'Second argument: Camera position'
 server_ip = sys.argv[1]
-parent_dir = os.path.join(os.path.dirname(__file__), '..')
-with open(os.path.join(parent_dir, 'WOBBLE_GIF_CAM_POSITION'), 'r') as fp:
-    CAMERA_NO = int(fp.readline())
+camera_pos = sys.argv[2]
 
 
 def on_connect(client, userdata, flags, rc):
@@ -31,7 +29,7 @@ def on_message(client, userdata, msg):
         photo[:, random.randint(0, 9)] = 255  # add random line
         print('Photo taken')
         payload = json.dumps({
-            'camera_no': CAMERA_NO,
+            'camera_no': camera_pos,
             'id': photo_id,
             'photo': photo.tolist(),
             'timestamp': datetime.datetime.now().isoformat(),
