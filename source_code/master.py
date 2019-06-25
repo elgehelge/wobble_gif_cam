@@ -47,13 +47,13 @@ def take_photo():
 
     # Stich
     print('Stiching photo')
-    photos_str = [received[cam_no]['photo']
+    photos_str = [received[str(cam_no)]['photo']
                   for cam_no in range(1, NUMBER_OF_CAMERAS + 1)]
     photos = [imageio.core.util.Image(np.array(p_str, dtype='uint8'))
               for p_str in photos_str]
     photo_sequence = photos[1:] + photos[::-1][1:]  # [2, 3, 4, 3, 2, 1]
-    imageio.mimwrite('gifs/output.gif', photo_sequence, fps=8)
-    print('Image successfully saved on disk in /gifs folder')
+    imageio.mimwrite('output.gif', photo_sequence, fps=8)
+    print('Image successfully saved on disk as output.gif')
 
 
 if __name__ == "__main__":
