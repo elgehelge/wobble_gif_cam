@@ -24,7 +24,7 @@ def take_photo():
     def on_message(client, userdata, msg):
         print(msg.topic + ', ' + str(msg.payload))
         if msg.topic == 'photo_taken':
-            photo_data = json.loads(msg.payload)
+            photo_data = json.loads(msg.payload.decode("utf-8"))
             received[photo_data['camera_no']] = photo_data
 
     # Prepare to receive

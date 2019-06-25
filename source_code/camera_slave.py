@@ -22,7 +22,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     print(msg.topic + ', ' + str(msg.payload))
     if msg.topic == 'take_photo':
-        photo_id = msg.payload
+        photo_id = msg.payload.decode("utf-8")
         # TODO: Snap a photo
         # Remove the 3 lines below when we have a real camera working
         photo = numpy.zeros([10, 10])  # placeholder 10x10 image
