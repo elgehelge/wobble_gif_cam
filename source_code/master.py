@@ -1,5 +1,6 @@
 import datetime
 import json
+import sys
 
 import pprint
 import imageio
@@ -8,7 +9,8 @@ import paho.mqtt.client as mqttc
 import paho.mqtt.publish as publish
 
 
-MQTT_SERVER = 'localhost'
+assert len(sys.argv) == 2, 'Please pass in the IP of the server'
+server_ip = sys.argv[1]
 NUMBER_OF_CAMERAS = 3
 
 
@@ -29,13 +31,13 @@ def take_photo():
     client = mqttc.Client()
     client.on_connect = on_connect
     client.on_message = on_message
-    client.connect(MQTT_SERVER, 1883, 60)
+    client.connect(server_ip, 1883, 60)
     #
     # # Send "take photo" signal
     print('Sending "take_photo" signal')
     topic = 'take_photo'
     photo_id = datetime.datetime.now().isoformat()
-    publish.single(topic, payload=photo_id, hostname=MQTT_SERVER)
+    publish.single(topic, payload=photo_id, hostname=server_ip)
 
     # Receive photos
     while len(received) < NUMBER_OF_CAMERAS:

@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import datetime
 import random
@@ -8,8 +9,11 @@ import paho.mqtt.client as mqttc
 import paho.mqtt.publish as publish
 
 
-MQTT_SERVER = 'localhost'
-CAMERA_NO = int(os.getenv('CAMERA_NO'))
+assert len(sys.argv) == 2, 'Please pass in the IP of the server'
+server_ip = sys.argv[1]
+parent_dir = os.path.join(os.path.dirname(__file__), '..')
+with open(os.path.join(parent_dir, 'WOBBLE_GIF_CAM_POSITION'), 'r') as fp:
+    CAMERA_NO = int(fp.readline())
 
 
 def on_connect(client, userdata, flags, rc):
@@ -32,12 +36,12 @@ def on_message(client, userdata, msg):
             'photo': photo.tolist(),
             'timestamp': datetime.datetime.now().isoformat(),
         })
-        publish.single('photo_taken', payload, hostname=MQTT_SERVER)
+        publish.single('photo_taken', payload, hostname=server_ip)
         print('Photo transferred')
 
 
 client = mqttc.Client()
 client.on_connect = on_connect
 client.on_message = on_message
-client.connect(MQTT_SERVER, 1883, 60)
+client.connect(server_ip, 1883, 60)
 client.loop_forever()
