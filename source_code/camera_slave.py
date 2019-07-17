@@ -35,6 +35,19 @@ def on_message(client, userdata, msg):
         publish.single('photo_taken', payload, hostname=MQTT_SERVER)
         print('Photo transferred')
 
+    # print('Image successfully saved on disk as ' + gif_file_path)
+    # print('Generating GIF')
+    # image_paths = [raw_image_path(timestamp, conn.cam_position)
+    #                for conn in connections]
+    # images = [imageio.imread(path) for path in image_paths]
+    # aligned_imgs = img_utils.auto_align(images)
+    # # [1, 2, 3, 4] -> [2, 3, 4, 3, 2, 1]
+    # images_sequence = aligned_imgs[1:] + aligned_imgs[::-1][1:]
+    # gif_id = timestamp
+    # gif_file_path = GIF_IMAGE_DIR + gif_id + '.gif'
+    # camera_ctrl.ensure_dir_exists(gif_file_path)
+    # imageio.mimwrite(gif_file_path, images_sequence, fps=8)
+
 
 client = mqttc.Client()
 client.on_connect = on_connect

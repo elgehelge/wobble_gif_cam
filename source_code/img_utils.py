@@ -57,12 +57,12 @@ def mean_pixel_diff(img1, img2):
 def crop(img, left, top, right, bottom):
     height = img.shape[0]
     width = img.shape[1]
-    return img[top:height-bottom, left:width-right]
+    return img[top:height - bottom, left:width - right]
 
 
 def shift(img1, img2, x, y):
     left, right = (abs(x), 0) if x < 0 else (0, x)
     top, bottom = (abs(y), 0) if y < 0 else (0, y)
     img1_shifted = crop(img1, left, top, right, bottom)
-    img2_shifted = crop(img2, right, bottom, left,  top)
+    img2_shifted = crop(img2, right, bottom, left, top)
     return img1_shifted, img2_shifted
