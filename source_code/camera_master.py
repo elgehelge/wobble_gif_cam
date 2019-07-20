@@ -1,3 +1,4 @@
+import os
 import datetime
 import json
 import sys
@@ -11,7 +12,7 @@ import paho.mqtt.publish as publish
 import img_utils
 
 
-NUMBER_OF_CAMERAS = 4
+NUMBER_OF_CAMERAS = 3
 
 assert len(sys.argv) == 2, 'Please pass in the IP of the server'
 server_ip = sys.argv[1]
@@ -25,7 +26,7 @@ server_ip = sys.argv[1]
 #
 
 
-def take_photo():
+def take_photo(output_dir):
     print('Capturing started!')
     received = {}
 
@@ -59,17 +60,17 @@ def take_photo():
 
     # Stich
     print('Stiching photo')
-    photos_str = [received[cam_no]['photo']
+    photos_str = [received[str(cam_no)]['photo']
                   for cam_no in range(1, NUMBER_OF_CAMERAS + 1)]
     photos_raw = [imageio.core.util.Image(np.array(p_str, dtype='uint8'))
                   for p_str in photos_str]
     photos = img_utils.auto_align(photos_raw)
     photo_sequence = photos[1:] + photos[::-1][1:]  # [2, 3, 4, 3, 2, 1]
-    imageio.mimwrite('gifs/output.gif', photo_sequence, fps=8)
-    print('Image successfully saved on disk in /gifs folder')
-    image_path = 'gifs/output.gif'
+    image_path = os.path.join(output_dir, received['1']['id'] + '.gif')
+    imageio.mimwrite(image_path, photo_sequence, fps=8)
+    print('Image successfully saved at', image_path)
     return image_path
 
 
 if __name__ == "__main__":
-    take_photo()
+    take_photo('.')

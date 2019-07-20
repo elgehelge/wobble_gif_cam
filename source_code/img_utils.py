@@ -5,17 +5,18 @@ def auto_align(rgb_imgs):
     """
     Aligns a sequence of images by shifting each image to match the previous
     """
-    imgs_gray = [img.mean(axis=-1).astype(int) for img in rgb_imgs]
-    relative_shift = [(0, 0)] + \
-                     [min_diff_search(imgs_gray[i], imgs_gray[i + 1]) for i
-                      in range(len(imgs_gray) - 1)]
-    shifts = numpy.array(relative_shift).cumsum(axis=0) * -1
-    right_bottom = shifts - shifts.min(axis=0)
-    left_top = (shifts - shifts.max(axis=0)) * -1
-    crop_l_t_r_b = numpy.concatenate([left_top, right_bottom], axis=1)
-    imgs_cropped = [crop(img, *crop_size)
-                    for img, crop_size in zip(rgb_imgs, crop_l_t_r_b)]
-    return imgs_cropped
+    # imgs_gray = [img.mean(axis=-1).astype(int) for img in rgb_imgs]
+    # relative_shift = [(0, 0)] + \
+    #                  [min_diff_search(imgs_gray[i], imgs_gray[i + 1]) for i
+    #                   in range(len(imgs_gray) - 1)]
+    # shifts = numpy.array(relative_shift).cumsum(axis=0) * -1
+    # right_bottom = shifts - shifts.min(axis=0)
+    # left_top = (shifts - shifts.max(axis=0)) * -1
+    # crop_l_t_r_b = numpy.concatenate([left_top, right_bottom], axis=1)
+    # imgs_cropped = [crop(img, *crop_size)
+    #                 for img, crop_size in zip(rgb_imgs, crop_l_t_r_b)]
+    # return imgs_cropped
+    return rgb_imgs
 
 
 def min_diff_search(shift_img, base_img):
