@@ -5,7 +5,7 @@ import camera_master
 
 app = Flask(__name__)
 
-GIF_IMAGE_DIR = 'static/OUTPUT/captured_gifs/'
+GIF_IMAGE_DIR = 'static/OUTPUT/'
 
 
 @app.route('/')
@@ -15,12 +15,8 @@ def show_start_screen():
 
 @app.route("/snap")
 def snap_a_gif():
-    """Take a gif photo"""
-
-    print('Started capturing!')
     gif_file_path = camera_master.take_photo()
-    gif_id = gif_file_path[:-4]  # TODO: change this
-    return redirect(url_for('show_add_contact_info', gif_id=gif_id))
+    return redirect(url_for('show_add_contact_info', gif_id=gif_file_path))
 
 
 @app.route('/add_contact_info/<gif_id>')

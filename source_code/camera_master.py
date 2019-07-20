@@ -11,9 +11,10 @@ import paho.mqtt.publish as publish
 import img_utils
 
 
+NUMBER_OF_CAMERAS = 4
+
 assert len(sys.argv) == 2, 'Please pass in the IP of the server'
 server_ip = sys.argv[1]
-NUMBER_OF_CAMERAS = 3
 
 # RASPISTILL_SETTINGS = '--rotation 270' \
 #                       '--quality 80' \
@@ -25,6 +26,7 @@ NUMBER_OF_CAMERAS = 3
 
 
 def take_photo():
+    print('Capturing started!')
     received = {}
 
     def on_connect(client, userdata, flags, rc):
@@ -52,7 +54,7 @@ def take_photo():
     # Receive photos
     while len(received) < NUMBER_OF_CAMERAS:
         client.loop()
-    print('All photos has been fcreceived!')
+    print('All photos has been received!')
     pprint.pprint(received)
 
     # Stich
